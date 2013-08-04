@@ -23,7 +23,7 @@ enum class_limit
 };
 
 /*还未进行hash的标志*/
-#define UNHASHED -1
+const int UNHASHED = -1;
 
 class JeType;
 
@@ -96,6 +96,45 @@ public:
 	{
 		return (cl & cl_static) != 0;
 	}
+
+	inline JeStrObject* str()
+	{
+		char buffer[30];
+		sprintf(buffer, "object at %p\n", this);
+		return NEW1(JeStrObject, buffer);
+	}
+
+	inline JeStrObject* repr()
+	{
+		char buffer[30];
+		sprintf(buffer, "object at %p\n", this);
+		return NEW1(JeStrObject, buffer);
+	}
+
+	inline JeObject* print(FILE *file)
+	{
+		if(!file)
+		{
+			printf("object at %p", this);
+			
+		}
+		else
+		{
+			fprintf(file, "object at %p", this);
+		}
+		return NEW0(JeNullObject);
+	}
+	/**
+	  *  jeff语言的函数,copy自身,与=不同
+	  *  = 是使用相同的指针,copy则生成一个新的拷贝
+	  *  这个新的拷贝与原象在引用计数和cl可能不一样,其他的数据域由相应的类型系统完成
+	  */
+	JeObject* copy()
+	{
+		JeObject *ret = NEW0(JeObject);
+		return ret;
+	}
+
 protected:
 	/*序列化*/
 	std::string serial(JeObject *object);
@@ -248,35 +287,7 @@ public:
 		return hash;
 	}
 
-	inline JeStrObject* str()
-	{
-		char buffer[30];
-		sprintf(buffer, "object at %p\n", this);
-		return NEW1(JeStrObject, buffer);
-	}
-
-	inline JeStrObject* repr()
-	{
-		char buffer[30];
-		sprintf(buffer, "object at %p\n", this);
-		return NEW1(JeStrObject, buffer);
-	}
-
-	inline JeObject* print(FILE *file)
-	{
-		if(!file)
-		{
-			printf("object at %p", this);
-			
-		}
-		else
-		{
-			fprintf(file, "object at %p", this);
-		}
-		return NEW0(JeNullObject);
-
-	}
-
+	
 private:
 	/*类型的名称*/
 	string name;

@@ -58,6 +58,14 @@ static inline void* mm_malloc(int len)
 
 /*多余三个就慢慢实现吧*/
 
+/*申请一段内存,申请失败自动抛出异常*/
+#define malloc_except(len) ({\
+	void *__ret = mm_malloc(len);\
+	if(!__ret)\
+		throw jeff_internal::NoMemException();\
+	__ret;\
+})
+
 #define DELETE(ptr) (mm_free(ptr))
 
 #endif
